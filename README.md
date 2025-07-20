@@ -4,9 +4,7 @@ A real-time shipment monitoring and notification system for logistics companies 
 
 ## 🚀 Overview
 
-CargoTracking is a distributed logistics application built with a **microservices architecture** using modern technologies. It enables users to create, track, and manage cargo shipments with live location updates and instant status change notifications.
-
-This project is designed to demonstrate scalable architecture, event-driven communication, real-time data flow, and DevOps best practices.
+Cargo Tracking is a real-time shipment monitoring and notification system designed for logistics companies and end users. Built with a microservices architecture using ASP.NET Core, React, SignalR, Kafka, RabbitMQ, Redis, and Docker, the system enables users to create, track, and manage cargo shipments efficiently. It provides live location updates on an interactive map and delivers instant status change notifications through a real-time communication channel. The backend handles event-driven updates and message-based communication between services, while the frontend offers a responsive and user-friendly interface for managing shipments, viewing shipment history, and tracking deliveries across regions. This project demonstrates scalable architecture, real-time data processing, and modern DevOps practices in a distributed system.
 
 ---
 
