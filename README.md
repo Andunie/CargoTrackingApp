@@ -1,7 +1,5 @@
 # CargoTracking
 
-# CargoTracking
-
 A real-time shipment monitoring and notification system for logistics companies and end users.
 
 ## 🚀 Overview
