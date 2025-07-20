@@ -1,0 +1,45 @@
+@baseUrl = http://localhost
+@authPort = 5001
+@shipmentPort = 5002
+@trackingPort = 5003
+
+### Register User
+POST {{baseUrl}}:{{authPort}}/api/auth/register
+Content-Type: application/json
+
+{
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "Test123!"
+}
+
+### Login User
+# @name login
+POST {{baseUrl}}:{{authPort}}/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "test@example.com",
+    "password": "Test123!"
+}
+
+### Create Shipment
+POST {{baseUrl}}:{{shipmentPort}}/api/shipments
+Content-Type: application/json
+Cookie: auth_token={{login.response.headers.Set-Cookie}}
+
+{
+    "trackingNumber": "SHIP123",
+    "sender": "John Doe",
+    "receiver": "Jane Smith",
+    "origin": "Istanbul",
+    "destination": "Ankara"
+}
+
+### Get All Shipments
+GET {{baseUrl}}:{{shipmentPort}}/api/shipments
+Cookie: auth_token={{login.response.headers.Set-Cookie}}
+
+### Get Shipment by ID
+GET {{baseUrl}}:{{shipmentPort}}/api/shipments/1
+Cookie: auth_token={{login.response.headers.Set-Cookie}} 

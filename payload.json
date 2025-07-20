@@ -1,0 +1,12 @@
+{
+  "trackingNumber": "TESTBASARILI001",
+  "sender": "Virtual AI Lab",
+  "senderLatitude": 39.9,
+  "senderLongitude": 32.8,
+  "receiver": "Human Operator",
+  "receiverLatitude": 41.0,
+  "receiverLongitude": 28.9,
+  "origin": "Ankara",
+  "destination": "Istanbul",
+  "receiverUserId": "1"
+} 

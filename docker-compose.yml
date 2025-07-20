@@ -1,0 +1,112 @@
+services:
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sql-server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Your_password123
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserverdata:/var/opt/mssql
+    networks:
+      - cargo-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672" # AMQP port
+      - "15672:15672" # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - cargo-network
+
+  shipment-api:
+    build:
+      context: .
+      dockerfile: ShipmentService/Dockerfile
+    container_name: shipment-api
+    ports:
+      - "5002:80"
+      - "5003:443"
+    depends_on:
+      - sql-server
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__ShipmentDb=Server=sql-server;Database=ShipmentDb;User=sa;Password=Your_password123;TrustServerCertificate=true;
+      - RabbitMQ__HostName=rabbitmq
+    networks:
+      - cargo-network
+
+  tracking-api:
+    build:
+      context: .
+      dockerfile: TrackingService/Dockerfile
+    container_name: tracking-api
+    ports:
+      - "8082:80"
+      - "8083:443"
+    depends_on:
+      - sql-server
+      - redis
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__TrackingDb=Server=sql-server;Database=TrackingDb;User=sa;Password=Your_password123;TrustServerCertificate=true;
+      - Redis__Configuration=redis:6379
+    networks:
+      - cargo-network
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: NotificationService/Dockerfile
+    container_name: notification-service
+    ports:
+      - "8086:8080"
+    depends_on:
+      - redis
+      - rabbitmq
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Redis__Configuration=redis:6379
+      - RabbitMQ__HostName=rabbitmq
+    networks:
+      - cargo-network
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - cargo-network
+
+  auth-service:
+    build:
+      context: .
+      dockerfile: AuthService/Dockerfile
+    container_name: auth-service
+    ports:
+      - "8084:8080"
+      - "8085:443"
+    depends_on:
+      - sql-server
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__UserDb=Server=sql-server;Database=UserDb;User=sa;Password=Your_password123;TrustServerCertificate=true;
+      - Jwt__Key=8a29a701ca324f88c0437af3bbe4af77dadcb89c
+      - Jwt__Issuer=CargoTrackingApp
+      - Jwt__Audience=CargoTrackingUsers
+    networks:
+      - cargo-network
+
+volumes:
+  sqlserverdata:
+
+networks:
+  cargo-network:
+    driver: bridge
